@@ -12,6 +12,9 @@ pygame.display.set_caption("Pong en Python")
 BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
 
+# Fuente para el marcador
+FUENTE = pygame.font.Font(None, 50)
+
 # Variables de las paletas
 PALETA_ANCHO, PALETA_ALTO = 15, 100
 paleta_izq = pygame.Rect(20, ALTO // 2 - PALETA_ALTO // 2, PALETA_ANCHO, PALETA_ALTO)
@@ -24,6 +27,10 @@ vel_x, vel_y = 5, 5
 
 # Velocidad de las paletas
 vel_paleta = 7
+
+# Puntuaciones
+puntos_izq = 0
+puntos_der = 0
 
 # Bucle principal
 ejecutando = True
@@ -56,8 +63,13 @@ while ejecutando:
     if pelota.colliderect(paleta_izq) or pelota.colliderect(paleta_der):
         vel_x *= -1
 
-    # Reinicio si la pelota sale de la pantalla
-    if pelota.left <= 0 or pelota.right >= ANCHO:
+    # Puntos y reinicio de la pelota
+    if pelota.left <= 0:  # Punto para el jugador derecho
+        puntos_der += 1
+        pelota.x, pelota.y = ANCHO // 2, ALTO // 2
+        vel_x *= -1  # Cambiar dirección después de un punto
+    if pelota.right >= ANCHO:  # Punto para el jugador izquierdo
+        puntos_izq += 1
         pelota.x, pelota.y = ANCHO // 2, ALTO // 2
         vel_x *= -1  # Cambiar dirección después de un punto
 
@@ -67,6 +79,12 @@ while ejecutando:
     pygame.draw.rect(VENTANA, BLANCO, paleta_der)
     pygame.draw.ellipse(VENTANA, BLANCO, pelota)
     pygame.draw.aaline(VENTANA, BLANCO, (ANCHO // 2, 0), (ANCHO // 2, ALTO))
+
+    # Mostrar puntuaciones
+    texto_izq = FUENTE.render(str(puntos_izq), True, BLANCO)
+    texto_der = FUENTE.render(str(puntos_der), True, BLANCO)
+    VENTANA.blit(texto_izq, (ANCHO // 4, 20))
+    VENTANA.blit(texto_der, (ANCHO * 3 // 4, 20))
 
     # Actualizar pantalla
     pygame.display.flip()
